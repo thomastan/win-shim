@@ -71,7 +71,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2021"
             VALUE "OriginalFilename", "shim.exe"
             VALUE "ProductName", "Shim executable"
-            VALUE "ProductVersion", "1.2.0.0"
+            VALUE "ProductVersion", "1.2.0.0-avanteam.3"
         END
     END
     BLOCK "VarFileInfo"

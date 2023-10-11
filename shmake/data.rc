@@ -82,7 +82,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2021 by Ivan G / Copyright (C) 2023 by Avanteam"
             VALUE "OriginalFilename", "shmake.exe"
             VALUE "ProductName", "Shim maker"
-            VALUE "ProductVersion", "1.2.0.0-avanteam.2"
+            VALUE "ProductVersion", "1.2.0.0-avanteam.3"
         END
     END
     BLOCK "VarFileInfo"
