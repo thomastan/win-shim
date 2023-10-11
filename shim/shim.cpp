@@ -2,7 +2,6 @@
 #include <string>
 #include "windows.h"
 #include "resource.h"
-#include <boost/algorithm/string/replace.hpp>
 #include "../shmake/resources.h"
 #include "../shmake/util.h"
 
@@ -51,21 +50,16 @@ int wmain(int argc, wchar_t* argv[], wchar_t *envp[])
     get_caps(caps_str, cap_clipboard, cap_no_kill);
 
     // args
-    wstring passed_arg;
-    for (int i = 1; i < argc; i++)
+    // use the original command-line string from GetCommandLine() for token replacement
+    // the string always starts with a path to the shim executable, so we need to remove it first
+    wstring passed_arg = ::GetCommandLine();
+    if (passed_arg[0] == L'"')
     {
-        if (i > 1) passed_arg += L" ";
-        wstring arg = argv[i];
-
-        // if an arg contains a space, encapsulate it into double quotes
-        // after having escape the double quotes it contains.
-        if (arg.find(' ') != string::npos)
-        {
-            boost::replace_all(arg, L"\"", L"\\\"");
-            arg.insert(0, L"\"");
-            arg.append(L"\"");
-        }
-        passed_arg += arg;
+        passed_arg.erase(0, wcslen(argv[0]) + 2);
+    }
+    else
+    {
+        passed_arg.erase(0, wcslen(argv[0]));
     }
 
     auto args = args_pattern;
@@ -83,7 +77,16 @@ int wmain(int argc, wchar_t* argv[], wchar_t *envp[])
         }
     }
 
-    wstring full_cmd = image_path;
+    // if the path to the target executable contains spaces, enclose it in double quotes
+    wstring full_cmd;
+    if (image_path.find(L" ") != wstring::npos && image_path[0] != L'"')
+    {
+        full_cmd = L'"' + image_path + L'"';
+    }
+    else
+    {
+        full_cmd = image_path;
+    }
     if (!args.empty())
     {
         full_cmd += L" " + args;
