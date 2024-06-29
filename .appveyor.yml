@@ -1,0 +1,47 @@
+version: 1.{build}-win64
+
+image: Previous Visual Studio 2022
+
+init:
+  - vcpkg install boost-program-options:x64-windows boost-program-options:x64-windows-static boost-algorithm:x64-windows boost-algorithm:x64-windows-static
+
+clone_folder: c:\projects\code
+
+matrix:
+  allow_failures:
+    - platform: x64
+      configuration: Release
+
+# scripts that run after cloning repository
+install:
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+platform:
+  - x64
+
+configuration: Release
+
+build:
+  parallel: true                  # enable MSBuild parallel builds
+  project: win-shim.sln
+  verbosity: detailed             # quiet|minimal|normal|detailed
+
+build_script:
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - msbuild win-shim.sln
+
+test: off
+
+artifacts:
+  - path: '**\*.exe'
+
+deploy:
+  # Deploy to GitHub Releases
+  - provider: GitHub
+    artifact: dist\*
+    draft: true
+    prerelease: false
+    force_update: true
+    on:
+      appveyor_repo_tag: true      # deploy on tag push only
+      #branch: main                # release from main branch only
